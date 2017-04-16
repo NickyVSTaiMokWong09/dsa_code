@@ -1,3 +1,5 @@
+#include <cstddef>
+
 typedef int Rank;
 #define ListNodePosi(T) ListNode<T>* // 文本宏替换
 

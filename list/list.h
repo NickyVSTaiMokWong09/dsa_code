@@ -23,7 +23,7 @@ public:
    ~List () { clear(); delete header; delete trailer; }
 
    // operator
-   T &operator[] ( Rank r ) const; // call by position
+   ListNodePosi(T) operator[] ( Rank r ) const; // call by position
 
    // 辅助函数
    ListNodePosi ( T ) first () const { return header->succ; } // 返回首元素
@@ -52,8 +52,10 @@ public:
 *                               implementation                                *
 *******************************************************************************/
 template <typename T> void List<T>::init () { // 插入头尾哨兵
-   header = new ListNodePosi ( T );
-   trailer = new ListNodePosi ( T );
+   //header = new ListNodePosi ( T );
+   //trailer = new ListNodePosi ( T );
+   header = new ListNode<T>;
+   trailer = new ListNode<T>;
    header->succ = trailer; header->pred = nullptr;
    trailer->pred = header; trailer->succ = nullptr;
    _size = 0; // 头尾节点不在规模中
@@ -79,12 +81,12 @@ T List<T>::remove ( ListNodePosi ( T ) p ) {
    return element;
 }
 
-template <typename T> T &List<T>::operator[] ( Rank r ) const {
+template <typename T> ListNodePosi(T) List<T>::operator[] ( Rank r ) const {
    ListNodePosi ( T ) node = first ();
    while ( r-- > 0 ) {
       node = node->succ;
    }
-   return node->data;
+   return node;
 }
 
 // 如果p越界会发生什么?

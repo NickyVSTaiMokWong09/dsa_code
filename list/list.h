@@ -23,7 +23,7 @@ public:
    ~List () { clear(); delete header; delete trailer; }
 
    // operator
-   ListNodePosi(T) operator[] ( Rank r ) const; // call by position
+   ListNodePosi ( T ) operator[] ( Rank r ) const; // call by position
 
    // 辅助函数
    ListNodePosi ( T ) first () const { return header->succ; } // 返回首元素
@@ -35,6 +35,9 @@ public:
    // 在p的后n个真后继中寻找等于e的元素（秩最靠前）
    ListNodePosi ( T ) find ( T &e, ListNodePosi ( T ) p, int n ) const;
 
+   // 有序查找
+   ListNodePosi ( T ) search ( T const &e, int n, ListNodePosi ( T ) p ) const;
+
    // 插入
    ListNodePosi ( T ) insertAsFirst ( T const &e ); // 作为首节点插入
    ListNodePosi ( T ) insertAsLast ( T const &e );
@@ -44,6 +47,14 @@ public:
 
    // remove
    T remove ( ListNodePosi ( T ) p );
+
+   int deduplicate (); // 无序唯一化
+   int uniquify ();    // 有序唯一化
+
+   // 遍历
+   void traverse ( void ( *visit ) ( T & ) ); // function pointer
+   template <typename VST> void traverse ( VST &visit ); // function object
+
 };
 
 
@@ -81,7 +92,7 @@ T List<T>::remove ( ListNodePosi ( T ) p ) {
    return element;
 }
 
-template <typename T> ListNodePosi(T) List<T>::operator[] ( Rank r ) const {
+template <typename T> ListNodePosi ( T ) List<T>::operator[] ( Rank r ) const {
    ListNodePosi ( T ) node = first ();
    while ( r-- > 0 ) {
       node = node->succ;
@@ -95,6 +106,14 @@ ListNodePosi ( T ) List<T>::find ( T &e, int n, ListNodePosi ( T ) p ) const {
    while ( p != header && n-- > 0 ) // ( header, p)
       if ( e == ( p->pred )->data ) { return p; }
    return nullptr;
+}
+
+template <typename T> ListNodePosi ( T ) List<T>::search (
+   T const &e, int n, ListNodePosi ( T ) p ) const {
+   while ( n-- >= 0 ) {
+      if ( ( p = p->pred )->data <= e ) { break; }
+   }
+   return p;
 }
 
 template <typename T>
@@ -120,3 +139,50 @@ ListNodePosi ( T ) List<T>::insertB ( ListNodePosi ( T ) p, const T &e ) {
    ++_size;
    return p->insertAsPred ( e );
 }
+
+// 返回重复元素个数
+template <typename T>
+int List<T>::deduplicate () {
+   if ( _size < 2 ) { return 0; }
+   int oldSize = _size;
+   ListNodePosi ( T ) node = header; Rank r = 0;
+   while ( trailer != ( node = node -> succ ) ) {
+      ListNodePosi ( T ) same = find ( node->data, r, node );
+      same == nullptr ? ++r : remove ( same );
+   }
+   return oldSize - _size;
+}
+
+template <typename T>
+int List<T>::uniquify () {
+   if ( _size < 2 ) { return 0; }
+   int oldSize = _size;
+   ListNodePosi ( T ) p = first(); ListNodePosi ( T ) q;
+   while ( ( q = p->succ ) != trailer ) {
+      if ( q->data != p->data )         { p = q; }
+      else                              { remove ( q );}
+   }
+   return oldSize - _size;
+}
+
+template <typename T>
+void List<T>::traverse ( void ( *visit ) ( T & ) ) {
+   for ( ListNodePosi ( T ) i = header->succ; i != trailer; i = i->succ )
+   { visit ( i->data ); }
+}
+
+template <typename T> template <typename VST>
+void List<T>::traverse ( VST &visit ) {
+   for ( ListNodePosi ( T ) i = header->succ; i != trailer; i = i->succ )
+   { visit ( i->data ); }
+}
+
+
+
+
+
+// funcobj  using by test
+template <typename T> class funcobj {
+public:
+   void operator() ( T &data ) { ++data; }
+};

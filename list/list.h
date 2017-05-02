@@ -55,6 +55,9 @@ public:
    void traverse ( void ( *visit ) ( T & ) ); // function pointer
    template <typename VST> void traverse ( VST &visit ); // function object
 
+   // 排序器
+   void sort ( ListNodePosi ( T ) p, int n );
+   void insertionSort ( ListNodePosi ( T ) p, int n );
 };
 
 
@@ -177,9 +180,22 @@ void List<T>::traverse ( VST &visit ) {
    { visit ( i->data ); }
 }
 
+//template <typename T>
+//void List<T>::sort ( ListNodePosi ( T ) p, int n ) {
+//switch ( rand() %3 ) {
+//case 1: insertionSort ( p, n ); break;
+//case 2: selectionSort ( p, n ); break;
+//default: mergeSort ( p, n ); break;
+//}
+//}
 
-
-
+template <typename T>
+void List<T>::insertionSort ( ListNodePosi ( T ) p, int n ) {
+	for ( int i = 0; i != n; ++i) {
+		insertA ( search ( p->data, i, p ), p->data );
+		p = p->succ; remove ( p->pred );
+	}
+}
 
 // funcobj  using by test
 template <typename T> class funcobj {

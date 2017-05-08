@@ -28,6 +28,9 @@ public:
    // 辅助函数
    ListNodePosi ( T ) first () const { return header->succ; } // 返回首元素
    ListNodePosi ( T ) last () const { return trailer->pred; }
+   ListNodePosi ( T ) selectMax ( ListNodePosi ( T ) p, int n ) const;
+   int size() { return _size; }
+   bool empty() { return _size <= 0; }
 
    // 无序查找
    // 在p的前n个真前驱中寻找等于e的元素（秩最靠后）
@@ -58,6 +61,7 @@ public:
    // 排序器
    void sort ( ListNodePosi ( T ) p, int n );
    void insertionSort ( ListNodePosi ( T ) p, int n );
+   void selectionSort ( ListNodePosi ( T ) p, int n );
 };
 
 
@@ -190,12 +194,34 @@ void List<T>::traverse ( VST &visit ) {
 //}
 
 template <typename T>
-void List<T>::insertionSort ( ListNodePosi ( T ) p, int n ) {
-	for ( int i = 0; i != n; ++i) {
-		insertA ( search ( p->data, i, p ), p->data );
-		p = p->succ; remove ( p->pred );
-	}
+ListNodePosi ( T ) List<T>::selectMax ( ListNodePosi ( T ) p, int n ) const {
+   ListNodePosi ( T ) max = p;
+   for ( ListNodePosi ( T ) curr = p ; n > 1; --n ) {
+      if ( ( curr = curr->data )->data >= max->data ) // WARNING >=
+      { max = curr; }
+   }
+   return max;
 }
+
+template <typename T>
+void List<T>::insertionSort ( ListNodePosi ( T ) p, int n ) {
+   for ( int i = 0; i != n; ++i ) {
+      insertA ( search ( p->data, i, p ), p->data );
+      p = p->succ; remove ( p->pred );
+   }
+}
+
+template <typename T>
+void List<T>::selectionSort ( ListNodePosi ( T ) p, int n ) {
+   ListNodePosi ( T ) head = p->pred; ListNodePosi ( T ) tail = p;
+   for ( int i = 0; i < n; ++i ) { tail = tail->succ; }
+   while ( 1 < n ) {
+      ListNodePosi ( T ) max = selectMax ( head->succ,n );
+      insertB ( tail, remove ( max ) );
+      tail = tail->pred; n--;
+   }
+}
+
 
 // funcobj  using by test
 template <typename T> class funcobj {

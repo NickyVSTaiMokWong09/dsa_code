@@ -26,6 +26,7 @@ public:
    Vector<T> &operator= ( Vector<T> const &a );
    T &operator[] ( Rank r ) { return _elem[r]; }
    Rank size() const { return _size; }
+   bool empty() { return _size <= 0; }
    // destructor
    ~Vector () { delete[] _elem; }
    //
@@ -86,7 +87,7 @@ public:
 
 //模版定义贼坑：函数模版和类模版成员函数的定义通常放在头文件中
 //曲线救国，实现声明和定义分离
-#include "vector_basic.h"
+//#include "vector_basic.h"
 
 template <typename T>
 void Vector<T>::copyFrom ( T const *A, Rank lo, Rank hi ) {
@@ -277,7 +278,7 @@ void Vector<T>::sort ( Rank lo, Rank hi ) {
    switch ( rand () % 5 ) {
    case 1 : bubbleSort ( lo,hi ); break;
       //case 2 : selectionSort ( lo,hi ); break;
-		//case 3 : mergeSort ( lo,hi ); break;
+      //case 3 : mergeSort ( lo,hi ); break;
       //case 4 : heapSort ( lo,hi ); break;
       //default : quickSort ( lo,hi ); break;
    }

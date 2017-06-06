@@ -5,6 +5,7 @@
 *                                  二叉树节点模版类                            *
 *******************************************************************************/
 #define BinNodePosi(T) BinNode<T>*
+#define stature(p) ( (p) ? (p)->height : -1 )
 typedef enum { RB_RED, RB_BLACK } RBColor;
 
 template <typename T> class BinNode {
@@ -18,38 +19,33 @@ public:
    int npl; 		// Null Path Length
    RBColor color; // 颜色（红黑树)
 
-   /* 构造函数
-    * TODO 优化构造函数(委托构造)
-    * */
-   BinNode () :
-      parent ( nullptr ), lc ( nullptr ), rc ( nullptr ), height ( 0 ),
-      npl ( 1 ), color ( RB_RED ) { }
+   // Constructor
+   BinNode ()
+      : parent ( nullptr ), lc ( nullptr ), rc ( nullptr ),
+        height ( 0 ), npl ( 1 ), color ( RB_RED ) { }
    BinNode ( T e, BinNodePosi ( T ) p = nullptr,
              BinNodePosi ( T ) lc = nullptr, BinNodePosi ( T ) rc = nullptr,
-             int h = 0, int npl = 1, RBColor c = RB_RED ) :
-      data ( e ), parent ( p ), lc ( lc ), rc ( rc ), height ( h ),
-      npl ( npl ),color ( c ) { }
+             int h = 0, int npl = 1, RBColor c = RB_RED )
+      : data ( e ), parent ( p ),
+        lc ( lc ), rc ( rc ), height ( h ), npl ( npl ),color ( c ) { }
 
-   /* 操作接口区 */
+   // Capacity
    int size ();
+
+   // Modifiers
    BinNodePosi ( T ) insertAsLC ( T const & );
    BinNodePosi ( T ) insertAsRC ( T const & );
+
+   // Lookup
    BinNodePosi ( T ) succ();
 
    /* 比较器、判等器 */
-   bool operator< ( BinNode const &bn ) { return data<bn.data; }
-   // 检查操作接口
-   bool IsRoot ( BinNode const &bn );
+   bool operator< ( BinNode const &bn ) { return data < bn.data; }
 };
 
 /*******************************************************************************
 *                               implementation                                *
 *******************************************************************************/
-
-template <typename T>
-inline bool BinNode<T>::IsRoot ( BinNode const &bn ) {
-   return bn.parent == nullptr ? true : false;
-}
 
 template <typename T>
 BinNodePosi ( T ) BinNode<T>::insertAsLC ( T const &e ) {
@@ -60,5 +56,11 @@ template <typename T>
 BinNodePosi ( T ) BinNode<T>::insertAsRC ( T const &e ) {
    return rc = new BinNode ( e, this );
 }
+
+/*******************************************************************************
+*                               BinNode 状态与性质判断                               *
+*******************************************************************************/
+
+#define IsRoot(x) ( !( (x).parent ))
 
 #endif /* ifndef BINTREE_BINNODE_H */
